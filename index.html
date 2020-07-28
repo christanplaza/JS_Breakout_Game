@@ -10,7 +10,7 @@
 
             var WIDTH = 500;
             var HEIGHT = 500;
-            var numOfTiles, tileList;
+            var numOfTiles, tileList, score;
 
             ctx.font = "20px Ubuntu";
 
@@ -26,11 +26,12 @@
             var base = {
                 x: 0,
                 y: 400,
+                lives: 3,
                 height: 20,
                 width: 100,
                 color: 'red',
                 pressingLeft: false,
-                pressingRight: false
+                pressingRight: false,
             }
 
             var tile = {
@@ -127,8 +128,12 @@
                 if (ball.x > WIDTH || ball.x < 0) {
                     ball.spdX = -ball.spdX;
                 }
-                if (ball.y > HEIGHT || ball.y < 0) {
+                if (ball.y < 0) {
                     ball.spdY = -ball.spdY;
+                }
+                if (ball.y > HEIGHT) {
+                    ball.spdY = -ball.spdY;
+                    base.lives--;
                 }
             }
 
@@ -147,12 +152,15 @@
                     if (testCollisionTile(tileList[key], ball)) {
                         delete tileList[key];
                         ball.spdY = -ball.spdY;
+                        score += 5;
                     }
                 }
 
+                ctx.fillText('Score: ' + score, 5, 495);
+                ctx.fillText('Lives: ' + base.lives, 425, 495);
+
                 updateBasePosition();
                 updateBallPosition();
-                
             }
 
             startGame = function() {
@@ -163,6 +171,8 @@
                 var tileX = 5;
                 var tileY = 5;
                 tileList = [];
+                score = 0;
+                base.lives = 3;
                 for (var i=1; i<= 6; i++) {
                     tileX = 5;
                     for (var j=1; j<=11; j++) {
