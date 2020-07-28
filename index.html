@@ -35,7 +35,8 @@
 
             var tile = {
                 height: 20,
-                width:40
+                width: 40,
+                color: 'orange'
             };
 
             document.onkeydown = function(event) {
@@ -59,11 +60,18 @@
             }
 
             testCollision = function(base, ball) {
-                //
                 return ((base.x < ball.x + 2*ball.radius) &&
                         (ball.x < base.x + base.width) &&
                         (base.y < ball.y + 2*ball.radius) &&
                         (ball.y < base.y + base.height)
+                        );
+            }
+
+            testCollisionTile = function(t, ball) {
+                return ((t.x < ball.x + 2*ball.radius) &&
+                        (ball.x < t.x + tile.width) &&
+                        (t.y < ball.y + 2*ball.radius) &&
+                        (ball.y < t.y + tile.height)
                         );
             }
 
@@ -83,6 +91,15 @@
 
                 ctx.fillStyle = base.color;
                 ctx.fillRect(base.x, base.y, base.width, base.height);
+
+                ctx.restore();
+            }
+
+            drawTile = function(t, i) {
+                ctx.save();
+
+                ctx.fillStyle = tile.color;
+                ctx.fillRect(t.x, t.y, tile.width, tile.height);
 
                 ctx.restore();
             }
@@ -117,11 +134,20 @@
 
             update = function() {
                 ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+                tileList.forEach(drawTile);
                 drawBall();
                 drawBase();
                 
                 if (testCollision(base, ball)) {
                     ball.spdY = -ball.spdY;
+                }
+
+                for(key in tileList) {
+                    if (testCollisionTile(tileList[key], ball)) {
+                        delete tileList[key];
+                        ball.spdY = -ball.spdY;
+                    }
                 }
 
                 updateBasePosition();
@@ -138,6 +164,7 @@
                 var tileY = 5;
                 tileList = [];
                 for (var i=1; i<= 6; i++) {
+                    tileX = 5;
                     for (var j=1; j<=11; j++) {
                         tileList[numOfTiles] = {x: tileX, y: tileY};
                         numOfTiles++;
