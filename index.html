@@ -10,9 +10,10 @@
 
             var WIDTH = 500;
             var HEIGHT = 500;
-            var numOfTiles, tileList, score;
+            var numOfTiles, tileList, score, intervalVar, running = false;
 
             ctx.font = "20px Ubuntu";
+            ctx.fillText("Click to start!", 180, 250);
 
             var ball = {
                 x: 0,
@@ -39,6 +40,15 @@
                 width: 40,
                 color: 'orange'
             };
+            
+            document.getElementById('ctx').onmousedown = function() {
+                if (running) {
+                    running = false;
+                    clearInterval(intervalVar);
+                }
+
+                startGame();
+            }
 
             document.onkeydown = function(event) {
                 if (event.keyCode == 37) {
@@ -137,6 +147,13 @@
                 }
             }
 
+            isGameOver = function() {
+                if (base.lives < 0 || score == 330) {
+                    clearInterval(intervalVar);
+                    ctx.fillText("Game Over! Click to restart", 150, 250);
+                } 
+            }
+
             update = function() {
                 ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
@@ -159,6 +176,7 @@
                 ctx.fillText('Score: ' + score, 5, 495);
                 ctx.fillText('Lives: ' + base.lives, 425, 495);
 
+                isGameOver();
                 updateBasePosition();
                 updateBallPosition();
             }
@@ -173,6 +191,7 @@
                 tileList = [];
                 score = 0;
                 base.lives = 3;
+                running = true;
                 for (var i=1; i<= 6; i++) {
                     tileX = 5;
                     for (var j=1; j<=11; j++) {
@@ -182,10 +201,8 @@
                     }
                     tileY += 25;
                 }
-                setInterval(update, 20);
-            }
-
-            startGame();            
+                intervalVar = setInterval(update, 20);
+            }   
         </script>
     </body>
 </html>
