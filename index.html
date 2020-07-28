@@ -52,6 +52,15 @@
                 }
             }
 
+            testCollision = function(base, ball) {
+                //
+                return ((base.x < ball.x + 2*ball.radius) &&
+                        (ball.x < base.x + base.width) &&
+                        (base.y < ball.y + 2*ball.radius) &&
+                        (ball.y < base.y + base.height)
+                        );
+            }
+
             drawBall = function() {
                 ctx.save();
 
@@ -102,10 +111,16 @@
 
             update = function() {
                 ctx.clearRect(0, 0, WIDTH, HEIGHT);
-                updateBasePosition();
-                updateBallPosition();
                 drawBall();
                 drawBase();
+                
+                if (testCollision(base, ball)) {
+                    ball.spdY = -ball.spdY;
+                }
+
+                updateBasePosition();
+                updateBallPosition();
+                
             }
 
             startGame = function() {
